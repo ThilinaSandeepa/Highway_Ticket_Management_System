@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Highway Ticket Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="ambient ambient-1"></div>
+    <div class="ambient ambient-2"></div>
+    <div class="app-shell">
+      <header class="hero">
+        <p class="eyebrow">Traffic Operations Console</p>
+        <h1>Highway Ticket Management Frontend</h1>
+        <p class="subtext">
+          Frontend-only module connected to existing backend APIs through the gateway.
+        </p>
+        <div class="hero-actions">
+          <button id="health-check" class="btn btn-primary">Run API Health Check</button>
+          <span id="health-result" class="health-result">Waiting...</span>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="card" id="users-card">
+          <h2>Users</h2>
+          <form id="users-form" class="form-grid">
+            <input name="userNic" placeholder="NIC" required />
+            <input name="userName" placeholder="Full Name" required />
+            <input name="userAddress" placeholder="Address" required />
+            <select name="gender" required>
+              <option value="">Select Gender</option>
+              <option value="MALE">MALE</option>
+              <option value="FEMALE">FEMALE</option>
+              <option value="OTHER">OTHER</option>
+            </select>
+            <button class="btn btn-primary" type="submit">Save User</button>
+          </form>
+          <div class="actions-row">
+            <button data-refresh="users" class="btn btn-ghost">Refresh</button>
+          </div>
+          <div id="users-list" class="list"></div>
+        </section>
+
+        <section class="card" id="vehicles-card">
+          <h2>Vehicles</h2>
+          <form id="vehicles-form" class="form-grid">
+            <input name="vehicleNumber" placeholder="Vehicle Number" required />
+            <input name="vehicleModel" placeholder="Vehicle Model" required />
+            <input name="userNic" placeholder="Owner NIC" required />
+            <button class="btn btn-primary" type="submit">Save Vehicle</button>
+          </form>
+          <div class="actions-row">
+            <button data-refresh="vehicles" class="btn btn-ghost">Refresh</button>
+          </div>
+          <div id="vehicles-list" class="list"></div>
+        </section>
+
+        <section class="card" id="tickets-card">
+          <h2>Tickets</h2>
+          <form id="tickets-form" class="form-grid">
+            <input name="ticketId" placeholder="Ticket ID" required />
+            <input name="description" placeholder="Description" required />
+            <select name="status" required>
+              <option value="">Select Status</option>
+              <option value="NONPAID">NONPAID</option>
+              <option value="PAID">PAID</option>
+            </select>
+            <input name="userNic" placeholder="User NIC" required />
+            <input name="vehicleNumber" placeholder="Vehicle Number" required />
+            <button class="btn btn-primary" type="submit">Save Ticket</button>
+          </form>
+          <div class="actions-row">
+            <button data-refresh="tickets" class="btn btn-ghost">Refresh</button>
+          </div>
+          <div id="tickets-list" class="list"></div>
+        </section>
+
+        <section class="card" id="payments-card">
+          <h2>Payments</h2>
+          <form id="payments-form" class="form-grid">
+            <input name="paymentId" placeholder="Payment ID" required />
+            <input name="ticketId" placeholder="Ticket ID" required />
+            <input name="amount" placeholder="Amount" type="number" min="0" step="0.01" required />
+            <input name="date" placeholder="Date (YYYY-MM-DD)" required />
+            <select name="status" required>
+              <option value="">Select Status</option>
+              <option value="NONPAID">NONPAID</option>
+              <option value="PAID">PAID</option>
+            </select>
+            <button class="btn btn-primary" type="submit">Save Payment</button>
+          </form>
+          <div class="actions-row">
+            <button data-refresh="payments" class="btn btn-ghost">Refresh</button>
+          </div>
+          <div id="payments-list" class="list"></div>
+        </section>
+      </main>
+
+      <aside id="toast" class="toast"></aside>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

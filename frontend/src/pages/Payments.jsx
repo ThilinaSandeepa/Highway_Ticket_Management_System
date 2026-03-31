@@ -4,22 +4,43 @@ import { Trash2, CreditCard } from 'lucide-react';
 
 const Payments = () => {
   const [payments, setPayments] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ paymentId: '', ticketId: '', amount: '', date: '', status: '' });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  async function fetchData() {
     setLoading(true);
     try {
       const res = await getPayments();
       setPayments(res.data);
-    } catch(e) { console.error(e); }
+    } catch {
+      console.error('Failed to fetch payments');
+    }
     setLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getPayments()
+      .then((res) => {
+        if (isMounted) {
+          setPayments(res.data);
+        }
+      })
+      .catch(() => {
+        console.error('Failed to fetch payments');
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +49,7 @@ const Payments = () => {
       setShowModal(false);
       setFormData({ paymentId: '', ticketId: '', amount: '', date: '', status: '' });
       fetchData();
-    } catch(e) { alert('Error saving payment'); }
+    } catch { alert('Error saving payment'); }
   };
 
   const handleDelete = async (id) => {
@@ -36,7 +57,7 @@ const Payments = () => {
     try {
       await deletePayment(id);
       fetchData();
-    } catch(e) { alert('Error deleting payment'); }
+    } catch { alert('Error deleting payment'); }
   };
 
   return (

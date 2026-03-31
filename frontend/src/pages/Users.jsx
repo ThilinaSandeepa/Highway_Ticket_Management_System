@@ -1,25 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { getUsers, saveUser, deleteUser } from '../api';
-import { Trash2, Plus, UserPlus } from 'lucide-react';
+import { Trash2, UserPlus } from 'lucide-react';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ userNic: '', userName: '', userAddress: '', gender: '' });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  async function fetchData() {
     setLoading(true);
     try {
       const res = await getUsers();
       setUsers(res.data);
-    } catch(e) { console.error(e); }
+    } catch {
+      console.error('Failed to fetch users');
+    }
     setLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getUsers()
+      .then((res) => {
+        if (isMounted) {
+          setUsers(res.data);
+        }
+      })
+      .catch(() => {
+        console.error('Failed to fetch users');
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +49,7 @@ const Users = () => {
       setShowModal(false);
       setFormData({ userNic: '', userName: '', userAddress: '', gender: '' });
       fetchData();
-    } catch(e) { alert('Error saving user'); }
+    } catch { alert('Error saving user'); }
   };
 
   const handleDelete = async (nic) => {
@@ -36,7 +57,7 @@ const Users = () => {
     try {
       await deleteUser(nic);
       fetchData();
-    } catch(e) { alert('Error deleting user'); }
+    } catch { alert('Error deleting user'); }
   };
 
   return (

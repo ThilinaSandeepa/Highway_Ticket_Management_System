@@ -13,34 +13,54 @@ const data = [
   { name: 'Sun', revenue: 3490 },
 ];
 
-const StatCard = ({ title, value, icon: Icon, trend }) => (
-  <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
-    <div>
-      <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>
-      <h3 className="text-2xl font-bold text-slate-800">{value}</h3>
-      <p className="text-xs text-green-500 font-medium mt-1">{trend}</p>
+const StatCard = ({ title, value, icon, trend }) => {
+  const Icon = icon;
+
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between">
+      <div>
+        <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>
+        <h3 className="text-2xl font-bold text-slate-800">{value}</h3>
+        <p className="text-xs text-green-500 font-medium mt-1">{trend}</p>
+      </div>
+      <div className="bg-blue-50 p-3 rounded-lg">
+        <Icon className="text-blue-600" size={24} />
+      </div>
     </div>
-    <div className="bg-blue-50 p-3 rounded-lg">
-      <Icon className="text-blue-600" size={24} />
-    </div>
-  </div>
-);
+  );
+};
 
 const Dashboard = () => {
   const [healthStatus, setHealthStatus] = useState('Checking...');
 
-  useEffect(() => {
-    checkHealth();
-  }, []);
-
-  const checkHealth = async () => {
+  async function checkHealth() {
     try {
-      const res = await healthCheck();
+      await healthCheck();
       setHealthStatus('Online');
-    } catch (err) {
+    } catch {
       setHealthStatus('Offline');
     }
-  };
+  }
+
+  useEffect(() => {
+    let isMounted = true;
+
+    healthCheck()
+      .then(() => {
+        if (isMounted) {
+          setHealthStatus('Online');
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setHealthStatus('Offline');
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">

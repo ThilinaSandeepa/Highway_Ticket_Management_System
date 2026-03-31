@@ -1,25 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { getVehicles, saveVehicle, deleteVehicle } from '../api';
-import { Trash2, Plus, Car } from 'lucide-react';
+import { Trash2, Car } from 'lucide-react';
 
 const Vehicles = () => {
   const [vehicles, setVehicles] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ vehicleNumber: '', vehicleModel: '', userNic: '' });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  async function fetchData() {
     setLoading(true);
     try {
       const res = await getVehicles();
       setVehicles(res.data);
-    } catch(e) { console.error(e); }
+    } catch {
+      console.error('Failed to fetch vehicles');
+    }
     setLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getVehicles()
+      .then((res) => {
+        if (isMounted) {
+          setVehicles(res.data);
+        }
+      })
+      .catch(() => {
+        console.error('Failed to fetch vehicles');
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +49,7 @@ const Vehicles = () => {
       setShowModal(false);
       setFormData({ vehicleNumber: '', vehicleModel: '', userNic: '' });
       fetchData();
-    } catch(e) { alert('Error saving vehicle'); }
+    } catch { alert('Error saving vehicle'); }
   };
 
   const handleDelete = async (id) => {
@@ -36,7 +57,7 @@ const Vehicles = () => {
     try {
       await deleteVehicle(id);
       fetchData();
-    } catch(e) { alert('Error deleting vehicle'); }
+    } catch { alert('Error deleting vehicle'); }
   };
 
   return (

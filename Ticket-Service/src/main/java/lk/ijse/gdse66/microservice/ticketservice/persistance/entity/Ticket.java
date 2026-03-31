@@ -1,14 +1,16 @@
 package lk.ijse.gdse66.microservice.ticketservice.persistance.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lk.ijse.gdse66.microservice.ticketservice.util.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 /**
  * @author: Vishal Sandakelum,
@@ -30,7 +32,7 @@ public class Ticket {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "state", nullable = false)
     private Status status;
 
     @Column(name = "user_nic", nullable = false)

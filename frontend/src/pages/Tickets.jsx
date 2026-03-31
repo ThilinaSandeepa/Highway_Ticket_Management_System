@@ -4,22 +4,43 @@ import { Trash2, Ticket as TicketIcon } from 'lucide-react';
 
 const Tickets = () => {
   const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ ticketId: '', description: '', status: '', userNic: '', vehicleNumber: '' });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  async function fetchData() {
     setLoading(true);
     try {
       const res = await getTickets();
       setTickets(res.data);
-    } catch(e) { console.error(e); }
+    } catch {
+      console.error('Failed to fetch tickets');
+    }
     setLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getTickets()
+      .then((res) => {
+        if (isMounted) {
+          setTickets(res.data);
+        }
+      })
+      .catch(() => {
+        console.error('Failed to fetch tickets');
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +49,7 @@ const Tickets = () => {
       setShowModal(false);
       setFormData({ ticketId: '', description: '', status: '', userNic: '', vehicleNumber: '' });
       fetchData();
-    } catch(e) { alert('Error saving ticket'); }
+    } catch { alert('Error saving ticket'); }
   };
 
   const handleDelete = async (id) => {
@@ -36,7 +57,7 @@ const Tickets = () => {
     try {
       await deleteTicket(id);
       fetchData();
-    } catch(e) { alert('Error deleting ticket'); }
+    } catch { alert('Error deleting ticket'); }
   };
 
   return (
